@@ -34,23 +34,20 @@ pub mod WebServer {
             stream.flush().unwrap();
         }
         pub fn write_html(&self, mut stream: &TcpStream, html: String){
-            // todo
+            let response = "HTTP/1.1 200 OK\r\n\r\n".to_owned() + &html;
+            stream.write(response.as_bytes()).unwrap();
+            stream.flush().unwrap();
         }
         pub fn handle_potential_get_request(&self, stream: &TcpStream){
-            // todo
+            let request = self.read_request(&stream);
+            if request.contains("GET") {
+                self.write_html(stream, "Hello World!".to_owned());
+            }
         }
         pub fn handle_potential_post_request(&self, stream: &TcpStream){
             let request = self.read_request(&stream);
-            let mut request = request.split_whitespace();
-            let method = request.next().unwrap();
-            let path = request.next().unwrap();
-            let protocol = request.next().unwrap();
-            if method == "POST" {
-                if path == "/" {
-                    self.write_html(&stream, "<h1>Index</h1>".to_owned());
-                } else {
-                    self.write_html(&stream, "<h1>404</h1>".to_owned());
-                }
+            if request.contains("POST") {
+                self.write_html(stream, "Hello World!".to_owned());
             }
         }
     }
